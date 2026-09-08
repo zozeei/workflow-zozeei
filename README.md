@@ -56,7 +56,7 @@ npx skills@latest add zozeei/workflow-zozeei
 ## หมายเหตุ
 
 สกิลที่ `SKILL.md` อ้างถึง (`grilling`, `diagnosing-bugs`, `ponytail`, `tdd`,
-`code-review` ฯลฯ) ไม่ได้รวมมาในชุด หากเครื่องนั้นไม่มี AI จะใช้ขั้นตอนพื้นฐานแทน
+`code-review`, `scrutinize` ฯลฯ) ไม่ได้รวมมาในชุด หากเครื่องนั้นไม่มี AI จะใช้ขั้นตอนพื้นฐานแทน
 
 อ้างอิง: [Claude Code plugins](https://code.claude.com/docs/en/plugin-marketplaces),
 [skills CLI](https://github.com/vercel-labs/skills),
