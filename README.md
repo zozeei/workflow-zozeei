@@ -22,7 +22,99 @@ workflow-zozeei/
 หากต้องการ workflow ของสกิลย่อยฉบับเต็ม ต้องติดตั้งสกิลนั้นแยกต่างหาก
 ชื่อสกิลเดียวกันอาจมีหน้าที่ต่างกัน จึงต้องอ่านขอบเขตก่อนเรียก
 
-## ติดตั้งใช้ส่วนตัวกับทุกโปรเจกต์
+## ติดตั้งจาก GitHub
+
+Repository: [zozeei/workflow-zozeei](https://github.com/zozeei/workflow-zozeei)
+
+### Codex CLI / IDE
+
+เปิด Codex แล้วส่งคำขอนี้ในช่องสนทนา:
+
+```text
+$skill-installer ติดตั้งสกิล workflow-zozeei จาก repository
+https://github.com/zozeei/workflow-zozeei โดยใช้ path .
+```
+
+`path .` หมายถึง `SKILL.md` อยู่ที่ root ของ repository
+เมื่อติดตั้งเสร็จแล้ว หากยังไม่พบสกิล ให้เริ่ม Codex ใหม่
+
+อ้างอิง: [Codex skills](https://learn.chatgpt.com/docs/build-skills)
+
+### Claude Code
+
+Repository นี้เป็น standalone skill จึงติดตั้งด้วยการ clone ไปยังโฟลเดอร์ skills:
+
+```bash
+mkdir -p "$HOME/.claude/skills"
+git clone https://github.com/zozeei/workflow-zozeei.git \
+  "$HOME/.claude/skills/workflow-zozeei"
+```
+
+หากมีโฟลเดอร์ปลายทางอยู่แล้ว อย่ารัน `git clone` ซ้ำ
+เมื่อติดตั้งเสร็จแล้ว หากยังไม่พบสกิล ให้เริ่ม Claude Code ใหม่
+
+การติดตั้งด้วย `/plugin install` ยังใช้ไม่ได้กับ repository นี้
+เพราะคำสั่งนั้นต้องใช้โครงสร้าง Claude plugin marketplace เพิ่มเติม
+
+อ้างอิง: [Claude Code skills](https://code.claude.com/docs/en/skills),
+[Claude Code plugins](https://code.claude.com/docs/en/discover-plugins)
+
+### Gemini CLI
+
+รันใน terminal:
+
+```bash
+gemini skills install https://github.com/zozeei/workflow-zozeei
+```
+
+คำสั่งนี้ติดตั้งระดับผู้ใช้โดยค่าเริ่มต้น จึงใช้ได้กับทุกโปรเจกต์ในเครื่อง
+หากต้องการติดตั้งเฉพาะโปรเจกต์ปัจจุบัน ให้ใช้:
+
+```bash
+gemini skills install https://github.com/zozeei/workflow-zozeei \
+  --scope workspace
+```
+
+ตรวจผลการติดตั้งด้วย:
+
+```bash
+gemini skills list
+```
+
+อ้างอิง: [Gemini CLI skills](https://geminicli.com/docs/cli/using-agent-skills/)
+
+## เรียกใช้สกิล
+
+`/workflow-zozeei` ใช้กับ Claude Code ครับ แต่แต่ละเครื่องมือใช้รูปแบบต่างกัน:
+
+| เครื่องมือ | วิธีเรียกโดยตรง |
+|---|---|
+| Codex CLI / IDE | `$workflow-zozeei ตามด้วยงานที่ต้องการ` |
+| Claude Code | `/workflow-zozeei ตามด้วยงานที่ต้องการ` |
+| Gemini CLI | พิมพ์ `ใช้สกิล workflow-zozeei` ตามด้วยงานที่ต้องการ |
+
+ตัวอย่าง:
+
+```text
+# Codex
+$workflow-zozeei ช่วยวางแผนเพิ่มระบบอนุมัติเอกสาร ยังไม่ต้องแก้ไฟล์
+```
+
+```text
+# Claude Code
+/workflow-zozeei ช่วยวางแผนเพิ่มระบบอนุมัติเอกสาร ยังไม่ต้องแก้ไฟล์
+```
+
+```text
+# Gemini CLI
+ใช้สกิล workflow-zozeei ช่วยวางแผนเพิ่มระบบอนุมัติเอกสาร ยังไม่ต้องแก้ไฟล์
+```
+
+Codex และ Claude Code อาจเลือกใช้สกิลโดยอัตโนมัติเมื่อคำขอตรงกับ `description`
+ส่วน Gemini CLI เปิดใช้สกิลจากคำขอภาษาธรรมชาติและอาจขออนุญาตก่อนเปิดใช้
+การระบุชื่อสกิลโดยตรงช่วยให้เลือก workflow นี้ได้แน่นอนขึ้น
+
+## ติดตั้งด้วยการคัดลอกไฟล์
 
 ใช้โฟลเดอร์ระดับผู้ใช้บนแต่ละเครื่อง เหมาะกับการใช้งานส่วนตัวข้ามโปรเจกต์
 คำสั่งด้านล่างสำหรับ Linux, macOS หรือ WSL โดยรันจากโฟลเดอร์แม่ที่มี
@@ -84,11 +176,11 @@ Gemini CLI อาจต้องให้ความเชื่อถือก
 [Claude Code](https://code.claude.com/docs/en/skills),
 [Gemini CLI](https://geminicli.com/docs/cli/tutorials/skills-getting-started/)
 
-## เริ่มใช้งาน
+## ตรวจสกิลหลังติดตั้งด้วยการคัดลอก
 
 ### Codex CLI / IDE
 
-เปิด `/skills` เพื่อตรวจว่าพบชื่อสกิล แล้วพิมพ์:
+เปิด `/skills` เพื่อตรวจว่าพบชื่อสกิล แล้วเรียกใช้ด้วย `$workflow-zozeei`
 
 ```text
 $workflow-zozeei ช่วยวางแผนเพิ่มระบบอนุมัติเอกสาร ยังไม่ต้องแก้ไฟล์หรือสร้าง issue
@@ -99,9 +191,7 @@ $workflow-zozeei ช่วยวางแผนเพิ่มระบบอน
 
 ### Claude Code
 
-```text
-/workflow-zozeei ช่วยวางแผนเพิ่มระบบอนุมัติเอกสาร ยังไม่ต้องแก้ไฟล์หรือสร้าง issue
-```
+เปิด `/skills` เพื่อตรวจว่าพบชื่อสกิล แล้วเรียกใช้ด้วย `/workflow-zozeei`
 
 หากเพิ่งสร้างโฟลเดอร์ skills ครั้งแรกและยังไม่พบ ให้เริ่ม Claude Code ใหม่
 อ้างอิง: [Claude Code skill invocation](https://code.claude.com/docs/en/skills)
@@ -143,14 +233,10 @@ Gemini CLI จะเลือกเปิดใช้สกิลผ่านก
 เทียบกับ requirement และโค้ดจริง แล้วสรุปว่าข้อไหนควรแก้พร้อมเหตุผล
 ```
 
-## ใช้ต่างเครื่องและเก็บบน GitHub
+## ใช้ต่างเครื่องผ่าน GitHub
 
-ไม่จำเป็นต้องใช้ GitHub สามารถย้ายโฟลเดอร์หรือ ZIP ผ่านช่องทางที่ใช้ประจำ
-แล้วติดตั้งบนเครื่องปลายทางตามขั้นตอนเดิม
-การติดตั้งระดับผู้ใช้ครอบคลุมโปรเจกต์ในเครื่องนั้น แต่ไม่ซิงก์ข้ามเครื่องอัตโนมัติ
-
-ถ้าต้องการเก็บประวัติและมีแหล่งดาวน์โหลดกลาง แนะนำ repository แยกชื่อ
-`workflow-zozeei` บน GitHub หรือ GitLab โดยวางไฟล์ดังนี้:
+GitHub repository นี้เป็นต้นฉบับกลางสำหรับติดตั้งบนเครื่องอื่น
+โดยวางไฟล์ดังนี้:
 
 ```text
 workflow-zozeei (repository)
@@ -158,24 +244,9 @@ workflow-zozeei (repository)
 └── README.md
 ```
 
-1. สร้าง repository ผ่านหน้าเว็บ โดยเลือก public หรือ private ตามที่ต้องการ
-2. อัปโหลดเฉพาะ `SKILL.md` และ `README.md` จากชุดนี้ไว้ที่ root
-3. บนเครื่องอื่น ดาวน์โหลด ZIP แล้วแตกไฟล์
-4. เปลี่ยนชื่อโฟลเดอร์ที่แตก เช่น `workflow-zozeei-main` เป็น `workflow-zozeei`
-5. คัดลอกไปยังโฟลเดอร์สกิลของเครื่องมือที่ต้องการ
-
-repository แบบ private ต้องเข้าถึงด้วยบัญชีที่มีสิทธิ์
-การเผยแพร่ repository ไม่ได้ติดตั้งสกิลลงเครื่องอื่นให้อัตโนมัติ
-
-Gemini CLI มีทางเลือกติดตั้งจาก GitHub โดยตรงหลังสร้าง repository แล้ว:
-
-```bash
-gemini skills install https://github.com/YOUR-ACCOUNT/workflow-zozeei
-```
-
-แทน `YOUR-ACCOUNT` ด้วยชื่อบัญชีจริง คำสั่งนี้ติดตั้งระดับผู้ใช้โดยค่าเริ่มต้น
-เลือกใช้แทนการคัดลอกด้วยมือเพื่อหลีกเลี่ยงสำเนาซ้ำ
-อ้างอิง: [Gemini CLI skill installation](https://geminicli.com/docs/cli/using-agent-skills/)
+บนเครื่องใหม่ ให้ใช้ขั้นตอนในหัวข้อ “ติดตั้งจาก GitHub” ตามเครื่องมือที่ต้องการ
+การติดตั้งระดับผู้ใช้ครอบคลุมทุกโปรเจกต์ในเครื่องนั้น
+แต่การแก้ไฟล์บน GitHub จะไม่อัปเดตสำเนาที่ติดตั้งไว้โดยอัตโนมัติ
 
 ## อัปเดตหรือเลิกใช้
 
