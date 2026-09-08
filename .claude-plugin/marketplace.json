@@ -1,0 +1,17 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "workflow-zozeei",
+  "description": "สกิลวางแผนและพัฒนาซอฟต์แวร์ภาษาไทย",
+  "owner": {
+    "name": "zozeei",
+    "url": "https://github.com/zozeei"
+  },
+  "plugins": [
+    {
+      "name": "workflow-zozeei",
+      "source": "./",
+      "description": "นำทางจากความต้องการไปสู่แผนและการลงมือที่ตรวจผลได้",
+      "category": "engineering"
+    }
+  ]
+}

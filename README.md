@@ -11,8 +11,13 @@
 
 ```text
 workflow-zozeei/
-├── SKILL.md     คำแนะนำที่ AI อ่าน
-└── README.md    วิธีติดตั้ง ใช้งาน และย้ายเครื่อง
+├── .claude-plugin/
+│   ├── marketplace.json    ทำให้ repository นี้เป็น marketplace ของตัวเอง
+│   └── plugin.json         ข้อมูล plugin สำหรับ Claude Code
+├── skills/
+│   └── workflow-zozeei/
+│       └── SKILL.md        คำแนะนำที่ AI อ่าน (ต้นฉบับไฟล์เดียว)
+└── README.md               วิธีติดตั้ง ใช้งาน และย้ายเครื่อง
 ```
 
 ชุดนี้ไม่มี executable script หรือ dependency ที่ต้องติดตั้ง
@@ -26,62 +31,59 @@ workflow-zozeei/
 
 Repository: [zozeei/workflow-zozeei](https://github.com/zozeei/workflow-zozeei)
 
-### Codex CLI / IDE
+มีสองเส้นทาง เลือกทางเดียว การติดตั้งทั้งสองทางจะได้สกิลซ้ำสองชุด
 
-เปิด Codex แล้วส่งคำขอนี้ในช่องสนทนา:
-
-```text
-$skill-installer ติดตั้งสกิล workflow-zozeei จาก repository
-https://github.com/zozeei/workflow-zozeei โดยใช้ path .
-```
-
-`path .` หมายถึง `SKILL.md` อยู่ที่ root ของ repository
-เมื่อติดตั้งเสร็จแล้ว หากยังไม่พบสกิล ให้เริ่ม Codex ใหม่
-
-อ้างอิง: [Codex skills](https://learn.chatgpt.com/docs/build-skills)
+- **Claude Code plugin** — ติดตั้งเป็นชุดที่ระบบจัดการให้ อัปเดตด้วย `/plugin update`
+- **skills.sh** — คัดลอกไฟล์สกิลลงเครื่องเป็นไฟล์ที่แก้เองได้ ใช้ได้กับ Codex, Gemini CLI และ agent อื่น
 
 ### Claude Code
 
-Repository นี้เป็น standalone skill จึงติดตั้งด้วยการ clone ไปยังโฟลเดอร์ skills:
+repository นี้เป็น marketplace ของตัวเอง จึงต้องเพิ่ม marketplace ก่อนหนึ่งครั้ง
+แล้วจึงติดตั้ง plugin:
 
-```bash
-mkdir -p "$HOME/.claude/skills"
-git clone https://github.com/zozeei/workflow-zozeei.git \
-  "$HOME/.claude/skills/workflow-zozeei"
+```text
+/plugin marketplace add zozeei/workflow-zozeei
+/plugin install workflow-zozeei@workflow-zozeei
 ```
 
-หากมีโฟลเดอร์ปลายทางอยู่แล้ว อย่ารัน `git clone` ซ้ำ
-เมื่อติดตั้งเสร็จแล้ว หากยังไม่พบสกิล ให้เริ่ม Claude Code ใหม่
-
-การติดตั้งด้วย `/plugin install` ยังใช้ไม่ได้กับ repository นี้
-เพราะคำสั่งนั้นต้องใช้โครงสร้าง Claude plugin marketplace เพิ่มเติม
-
-อ้างอิง: [Claude Code skills](https://code.claude.com/docs/en/skills),
-[Claude Code plugins](https://code.claude.com/docs/en/discover-plugins)
-
-### Gemini CLI
-
-รันใน terminal:
+หรือรันจาก terminal:
 
 ```bash
-gemini skills install https://github.com/zozeei/workflow-zozeei
+claude plugin marketplace add zozeei/workflow-zozeei
+claude plugin install workflow-zozeei@workflow-zozeei
 ```
 
-คำสั่งนี้ติดตั้งระดับผู้ใช้โดยค่าเริ่มต้น จึงใช้ได้กับทุกโปรเจกต์ในเครื่อง
-หากต้องการติดตั้งเฉพาะโปรเจกต์ปัจจุบัน ให้ใช้:
+ตรวจผลด้วย `/plugin` หรือ `/skills` แล้วเรียกใช้ด้วย `/workflow-zozeei`
+อัปเดตภายหลังด้วย `/plugin update workflow-zozeei`
+
+อ้างอิง: [Claude Code plugins](https://code.claude.com/docs/en/discover-plugins),
+[plugin marketplaces](https://code.claude.com/docs/en/plugin-marketplaces)
+
+### Codex, Gemini CLI และ agent อื่น
+
+plugin ด้านบนใช้ได้กับ Claude Code เท่านั้น เครื่องมืออื่นใช้ตัวติดตั้ง
+[skills.sh](https://skills.sh) ซึ่งคัดลอกไฟล์สกิลลงเครื่อง:
 
 ```bash
-gemini skills install https://github.com/zozeei/workflow-zozeei \
-  --scope workspace
+npx skills@latest add zozeei/workflow-zozeei
 ```
 
-ตรวจผลการติดตั้งด้วย:
+ตัวติดตั้งจะถามว่าจะติดตั้งลง agent ตัวใด เลือก `codex`, `gemini-cli`
+หรือตัวอื่นที่ใช้อยู่ ระบุตรง ๆ ได้ด้วย:
 
 ```bash
-gemini skills list
+npx skills@latest add zozeei/workflow-zozeei -a codex gemini-cli
 ```
 
-อ้างอิง: [Gemini CLI skills](https://geminicli.com/docs/cli/using-agent-skills/)
+ค่าเริ่มต้นติดตั้งลงโปรเจกต์ปัจจุบัน (`.agents/skills/`)
+เติม `-g` เพื่อติดตั้งระดับผู้ใช้ (`~/.codex/skills/`, `~/.gemini/skills/`)
+อัปเดตภายหลังด้วย `npx skills@latest update workflow-zozeei`
+
+เมื่อติดตั้งเสร็จแล้ว หากยังไม่พบสกิล ให้เริ่มเครื่องมือนั้นใหม่
+
+อ้างอิง: [Codex skills](https://developers.openai.com/codex/skills),
+[Gemini CLI skills](https://geminicli.com/docs/cli/using-agent-skills/),
+[skills CLI](https://github.com/vercel-labs/skills)
 
 ## เรียกใช้สกิล
 
@@ -116,9 +118,9 @@ Codex และ Claude Code อาจเลือกใช้สกิลโด�
 
 ## ติดตั้งด้วยการคัดลอกไฟล์
 
-ใช้โฟลเดอร์ระดับผู้ใช้บนแต่ละเครื่อง เหมาะกับการใช้งานส่วนตัวข้ามโปรเจกต์
-คำสั่งด้านล่างสำหรับ Linux, macOS หรือ WSL โดยรันจากโฟลเดอร์แม่ที่มี
-`workflow-zozeei/` หลังดาวน์โหลดหรือแตก ZIP แล้ว
+ใช้เมื่อไม่ต้องการตัวติดตั้ง เช่น เครื่องที่ไม่มี Node.js
+คำสั่งด้านล่างสำหรับ Linux, macOS หรือ WSL โดยรันจาก root ของ repository
+ที่ clone หรือแตก ZIP ไว้ (โฟลเดอร์ที่มี `skills/workflow-zozeei/`)
 หากติดตั้งแล้ว ให้ใช้ขั้นตอนอัปเดตด้านล่างแทนการคัดลอกซ้อน
 
 ### Codex และ Gemini CLI
@@ -128,7 +130,7 @@ Codex และ Claude Code อาจเลือกใช้สกิลโด�
 
 ```bash
 mkdir -p "$HOME/.agents/skills"
-cp -R ./workflow-zozeei "$HOME/.agents/skills/"
+cp -R ./skills/workflow-zozeei "$HOME/.agents/skills/"
 ```
 
 ปลายทางต้องเป็น `~/.agents/skills/workflow-zozeei/SKILL.md`
@@ -141,7 +143,7 @@ Gemini CLI รองรับ `~/.gemini/skills/` ด้วย เลือก�
 
 ```bash
 mkdir -p "$HOME/.claude/skills"
-cp -R ./workflow-zozeei "$HOME/.claude/skills/"
+cp -R ./skills/workflow-zozeei "$HOME/.claude/skills/"
 ```
 
 ปลายทางต้องเป็น `~/.claude/skills/workflow-zozeei/SKILL.md`
@@ -150,7 +152,7 @@ cp -R ./workflow-zozeei "$HOME/.claude/skills/"
 
 ### Windows ที่ไม่ได้ใช้ WSL
 
-ใช้ File Explorer คัดลอกโฟลเดอร์ `workflow-zozeei` ไปใต้ตำแหน่งเหล่านี้
+ใช้ File Explorer คัดลอกโฟลเดอร์ `skills\workflow-zozeei` ไปใต้ตำแหน่งเหล่านี้
 สร้างโฟลเดอร์แม่หากยังไม่มี:
 
 - Codex และ Gemini CLI: `%USERPROFILE%\.agents\skills\`
@@ -236,22 +238,19 @@ Gemini CLI จะเลือกเปิดใช้สกิลผ่านก
 ## ใช้ต่างเครื่องผ่าน GitHub
 
 GitHub repository นี้เป็นต้นฉบับกลางสำหรับติดตั้งบนเครื่องอื่น
-โดยวางไฟล์ดังนี้:
-
-```text
-workflow-zozeei (repository)
-├── SKILL.md
-└── README.md
-```
-
 บนเครื่องใหม่ ให้ใช้ขั้นตอนในหัวข้อ “ติดตั้งจาก GitHub” ตามเครื่องมือที่ต้องการ
 การติดตั้งระดับผู้ใช้ครอบคลุมทุกโปรเจกต์ในเครื่องนั้น
-แต่การแก้ไฟล์บน GitHub จะไม่อัปเดตสำเนาที่ติดตั้งไว้โดยอัตโนมัติ
+
+การแก้ไฟล์บน GitHub ไม่อัปเดตสำเนาที่ติดตั้งไว้โดยอัตโนมัติ
+ให้สั่งอัปเดตเองด้วย `/plugin update workflow-zozeei` (Claude Code)
+หรือ `npx skills@latest update workflow-zozeei` (เครื่องมืออื่น)
 
 ## อัปเดตหรือเลิกใช้
 
-- เก็บต้นฉบับกลางชุดเดียว แล้วอัปเดต `SKILL.md` จากต้นฉบับนั้น
-- สำหรับการติดตั้งด้วยการคัดลอก ให้แทนที่ `SKILL.md` และ `README.md`
+- ต้นฉบับมีชุดเดียวคือ `skills/workflow-zozeei/SKILL.md` บน GitHub
+- Claude Code plugin: `/plugin update workflow-zozeei`
+- ตัวติดตั้ง skills.sh: `npx skills@latest update workflow-zozeei`
+- สำหรับการติดตั้งด้วยการคัดลอก ให้แทนที่ `SKILL.md`
   ภายในโฟลเดอร์สกิลเดิมบนแต่ละเครื่อง แล้ว reload หรือเริ่มเครื่องมือใหม่
 - หากเคยแก้สำเนาที่ติดตั้งไว้ ให้เก็บการแก้นั้นก่อนแทนที่
 - เมื่อต้องการเลิกใช้ ย้ายโฟลเดอร์ `workflow-zozeei`
@@ -263,6 +262,7 @@ workflow-zozeei (repository)
 
 รองรับการอัปโหลด custom skill ZIP ผ่าน Customize → Skills
 ZIP ต้องมีโฟลเดอร์ `workflow-zozeei/` ครอบ `SKILL.md`
+สร้างจาก `skills/workflow-zozeei/` ใน repository นี้
 จากนั้นเปิดใช้สกิลและเรียกชื่อในคำขอ
 description ของชุดนี้จำกัดไว้ไม่เกิน 200 ตัวอักษรสำหรับรูปแบบดังกล่าว
 ความพร้อมของเมนูขึ้นอยู่กับบัญชีและการตั้งค่าขององค์กร

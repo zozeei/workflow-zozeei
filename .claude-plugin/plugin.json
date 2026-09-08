@@ -1,0 +1,18 @@
+{
+  "name": "workflow-zozeei",
+  "version": "1.0.0",
+  "description": "สกิลภาษาไทยสำหรับวางแผนและพัฒนาซอฟต์แวร์ ทำ requirement ให้ชัด เลือกวิธี แตกงาน ลงมือ และตรวจผล",
+  "author": {
+    "name": "zozeei",
+    "url": "https://github.com/zozeei"
+  },
+  "homepage": "https://github.com/zozeei/workflow-zozeei",
+  "repository": "https://github.com/zozeei/workflow-zozeei",
+  "license": "MIT",
+  "keywords": [
+    "workflow",
+    "planning",
+    "thai",
+    "engineering"
+  ]
+}
