@@ -1,7 +1,7 @@
 {
   "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
   "name": "workflow-zozeei",
-  "description": "สกิลวางแผนและพัฒนาซอฟต์แวร์ภาษาไทย",
+  "description": "สกิลวางแผน พัฒนา และตรวจความปลอดภัยซอฟต์แวร์ภาษาไทย",
   "owner": {
     "name": "zozeei",
     "url": "https://github.com/zozeei"
@@ -10,7 +10,7 @@
     {
       "name": "workflow-zozeei",
       "source": "./",
-      "description": "นำทางจากความต้องการไปสู่แผนและการลงมือที่ตรวจผลได้",
+      "description": "Workflow ตาม scope/สิทธิ์และ security audit จากหลักฐาน พร้อม OWASP Web 2025 และ Mobile 2024",
       "category": "engineering"
     }
   ]

@@ -1,7 +1,7 @@
 {
   "name": "workflow-zozeei",
-  "version": "1.2.0",
-  "description": "สกิลภาษาไทยสำหรับวางแผนและพัฒนาซอฟต์แวร์ ทำ requirement ให้ชัด เลือกวิธี แตกงาน ลงมือ และตรวจผล",
+  "version": "1.6.0",
+  "description": "ชุดสกิลภาษาไทยสำหรับวางแผน พัฒนาซอฟต์แวร์ และตรวจสอบความปลอดภัย (Security Audit, ValidatesSafeInput, OWASP Top 10 Web 2025 & Mobile 2024)",
   "author": {
     "name": "zozeei",
     "url": "https://github.com/zozeei"
@@ -13,6 +13,10 @@
     "workflow",
     "planning",
     "thai",
-    "engineering"
+    "engineering",
+    "security",
+    "owasp",
+    "audit",
+    "validation"
   ]
 }
