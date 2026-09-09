@@ -1,6 +1,6 @@
 {
   "name": "workflow-zozeei",
-  "version": "1.6.0",
+  "version": "1.6.2",
   "description": "ชุดสกิลภาษาไทยสำหรับวางแผน พัฒนาซอฟต์แวร์ และตรวจสอบความปลอดภัย (Security Audit, ValidatesSafeInput, OWASP Top 10 Web 2025 & Mobile 2024)",
   "author": {
     "name": "zozeei",

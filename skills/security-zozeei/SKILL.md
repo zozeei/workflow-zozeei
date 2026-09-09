@@ -5,7 +5,7 @@ description: >-
   validation (ValidatesSafeInput), or assess Web/API and Mobile risks against
   OWASP; รวมถึง ตรวจความปลอดภัย และ ตรวจช่องโหว่. Not for unrelated code edits.
 metadata:
-  version: "1.1.1"
+  version: "1.1.2"
 ---
 
 # Security Zozeei
@@ -77,3 +77,10 @@ Confidence: `high` = trace และเงื่อนไขสำคัญต�
 แนบ diff เมื่อเห็น code/API/consumer เพียงพอให้เสนอ patch ที่สอดคล้องได้ ถ้าบริบทไม่ครบ ให้แนวทางแก้และสิ่งที่ต้องตรวจแทน diff ที่เดา ระบุว่า patch ยังไม่ผ่านการทดสอบหากไม่ได้รัน verification การลบ secret ออกจาก code ไม่แทนการ rotate/revoke เมื่อมีหลักฐานว่า secret รั่วไหล
 
 ลิงก์ไฟล์ให้ใช้รูปแบบที่ runtime รองรับ พร้อม path:line ที่อ่านได้ ไม่ hard-code `file:///c:/...`
+
+### รายงาน Token Usage
+
+- เมื่อ runtime/tool แสดง usage จริง ให้ปิดท้ายรายงานด้วย `Token usage` และค่าที่ระบบให้มา แยก `input`, `output`, `cached` และ `total` เท่าที่มี พร้อมขอบเขตว่าเป็น audit task, session หรือ subagent
+- ถ้ามีหลาย agent ให้รายงานแยกแต่ละ agent และยอดรวมเฉพาะเมื่อข้อมูลครบหรือรวมจากค่าที่แสดงได้โดยตรง ระบุ agent/ช่วงงานที่ไม่รวม
+- ถ้า runtime ไม่เปิดเผย usage ให้เขียน `Token usage: runtime ไม่เปิดเผยข้อมูล` ห้ามประมาณจากจำนวนไฟล์ จำนวนคำ ขนาด context หรือ context-window limit
+- ค่าใช้จ่ายรายงานเฉพาะตัวเลข billing/cost ที่ระบบให้จริง ห้ามคำนวณเองเมื่อ model, cached-token policy หรือ billing scope ไม่ครบ

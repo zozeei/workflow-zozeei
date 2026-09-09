@@ -5,7 +5,7 @@ description: >-
   multi-step planning, implementation, or risk-based review; including วางแผน,
   แตกงาน, and ลงมือพัฒนา. Not needed for general questions unrelated to software work.
 metadata:
-  version: "1.6.0"
+  version: "1.6.1"
 ---
 
 # Workflow Zozeei
@@ -112,3 +112,10 @@ metadata:
 ## ส่งมอบ
 
 ใช้ภาษาหลักของผู้ใช้ สรุปผล/แนวทาง/สิ่งที่เปลี่ยน → verification ที่รันจริง → ข้อจำกัดหรือ decision ที่ยังต้องการ ระบุ reviewer/model เฉพาะที่ใช้จริง การจบคำตอบหรือไปขั้นถัดไปใช้กฎสิทธิ์และขอบเขตเดียวกัน
+
+### รายงาน Token Usage
+
+- เมื่อ runtime/tool แสดง usage จริง ให้ปิดท้ายด้วย `Token usage` และตัวเลขที่ระบบให้มา แยก `input`, `output`, `cached` และ `total` เท่าที่มี พร้อมระบุขอบเขตว่าเป็น turn, task, session หรือ subagent
+- ถ้ามีหลาย agent ให้รายงานแยกแต่ละ agent และยอดรวมเฉพาะเมื่อ runtime ให้ข้อมูลครบหรือคำนวณจากค่าที่แสดงได้โดยตรง ระบุส่วนที่ไม่รวม
+- ถ้า runtime ไม่เปิดเผย usage ให้เขียน `Token usage: runtime ไม่เปิดเผยข้อมูล` ห้ามประมาณจากจำนวนคำ ขนาด context หรือ context-window limit
+- รายงานค่าใช้จ่ายเฉพาะเมื่อระบบให้ billing/cost จริง ห้ามคูณราคาเองหากไม่ทราบ model, cached-token policy หรือ billing scope ที่แน่นอน

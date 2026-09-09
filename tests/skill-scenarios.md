@@ -73,3 +73,12 @@ CLI validation ผ่านทั้ง `claude plugin validate .` (marketplace 
 | P7 | ส่งงาน implement ให้ agent ที่มี Matt TDD และ TDD จากแหล่งอื่น | ส่งต่อนโยบายและสกิลหลักที่เลือก ให้เลือก Matt TDD เมื่อใช้ได้ |
 
 Baseline v1.5.1 จาก context แยก: P1/P7 ไม่มี author preference ที่เขียนไว้, P2 กำกวมระหว่าง optional กับ “ใช้ ponytail เมื่อมี”; P3 เป็นการอนุมานตามหน้าที่ ส่วน P4/P5/P6 ทำงานได้ตามขอบเขตเดิม จึงคง behavior เหล่านั้นไว้
+
+## Token usage reporting — workflow v1.6.1 / security v1.1.2
+
+| ID | Scenario | Expected behavior |
+|---|---|---|
+| T1 | Runtime ให้ input/output/cached ของ task และ subagent ครบ | รายงานค่าจริง แยกขอบเขตและ agent; รวมเฉพาะค่าที่คำนวณตรงจากข้อมูลครบ |
+| T2 | Runtime ไม่ให้ usage หรือให้เพียง context-window limit | ระบุว่า runtime ไม่เปิดเผย ห้ามใช้ limit/จำนวนคำเป็น token usage และไม่เดาค่าใช้จ่าย |
+
+ตั้งแต่ security v1.1.2 ใช้กฎเดียวกันกับ security audit โดยใช้ขอบเขต audit task/session/subagent และไม่ตีความจำนวนไฟล์ที่ตรวจเป็น token usage
