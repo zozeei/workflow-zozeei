@@ -9,6 +9,8 @@
 
 Workflow ใช้สิทธิ์ที่ผู้ใช้ให้ไว้ต่อเนื่องข้าม Phase; คำขอวางแผนอย่างเดียวไม่ให้สิทธิ์แก้ระบบ งานเล็กทำด้วย agent เดียวได้ การเลือกโมเดล/delegation ขึ้นกับความสามารถจริงของ runtime
 
+Security ครอบคลุมการตรวจรหัสผ่านที่เคยรั่ว, ไฟล์อัปโหลดและ active content, JWT/session, สิทธิ์ข้ามผู้ใช้/tenant และธุรกรรมพร้อมกัน รวม [N+1 และ resource limits](skills/security-zozeei/references/resource-performance.md) ที่โหลดเฉพาะเมื่อเกี่ยวข้อง โดยแยกผลด้าน performance ออกจากช่องโหว่ด้าน availability
+
 ## ติดตั้ง
 
 เลือกทางเดียว ติดตั้งทั้งสองทางจะได้สกิลซ้ำสองชุด

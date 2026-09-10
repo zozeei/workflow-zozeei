@@ -3,9 +3,10 @@ name: security-zozeei
 description: >-
   Use when asked to audit software security, review trust boundaries or input
   validation (ValidatesSafeInput), or assess Web/API and Mobile risks against
-  OWASP; รวมถึง ตรวจความปลอดภัย และ ตรวจช่องโหว่. Not for unrelated code edits.
+  OWASP; also audit N+1 queries and resource consumption when requested or relevant
+  to availability risks. รวมถึง ตรวจความปลอดภัย และ ตรวจช่องโหว่. Not for unrelated code edits.
 metadata:
-  version: "1.1.2"
+  version: "1.2.2"
 ---
 
 # Security Zozeei
@@ -33,6 +34,7 @@ metadata:
 | Input validation, password policy/storage, URL/SSRF, uploads, rich text, masking | [input-validation.md](references/input-validation.md) — 14 กลุ่ม ValidatesSafeInput |
 | Web / Backend / API | [owasp-web.md](references/owasp-web.md) — Web 2025 |
 | Android / iOS / Flutter / React Native | [owasp-mobile.md](references/owasp-mobile.md) — Mobile 2024 |
+| ขอเช็ค N+1/performance หรือพบ query ใน loop, lazy loading, unbounded list/batch หรืองานใช้ทรัพยากรสูงใน scope | [resource-performance.md](references/resource-performance.md) — Query และ resource limits |
 
 ชื่อ ValidatesSafeInput เป็นชื่อกลุ่มกฎของสกิล ไม่ได้บังคับให้โปรเจกต์มีฟังก์ชันชื่อเดียวกัน ตัวเลข/allowlist ที่เป็นตัวอย่างต้องปรับตาม contract และ threat model
 
@@ -51,6 +53,8 @@ Confidence: `high` = trace และเงื่อนไขสำคัญต�
 สำหรับ `confirmed` ให้เลือก CRITICAL/HIGH/MEDIUM/LOW จากสิทธิ์ผู้โจมตี, exploitability, exposure, ผลกระทบและขอบเขตข้อมูล พร้อมเหตุผล ไม่ผูก severity ตายตัวกับชื่อช่องโหว่ ถ้ายืนยัน code flaw ได้แต่ข้อมูลผลกระทบไม่พอ ให้ใช้ `NOT RATED` พร้อมสิ่งที่ต้องตรวจ สำหรับ `needs-verification` ระบุได้เพียง severity ที่คาดไว้และเงื่อนไข; `hardening` ใช้ INFORMATIONAL
 
 ## รูปแบบรายงาน
+
+แยก findings ด้าน `performance` ออกจาก `security/availability` ตามเกณฑ์ใน resource reference; N+1 อย่างเดียวไม่ยืนยัน DoS และไม่ต้องฝืนจัด OWASP/CWE ให้ข้อเสนอเพิ่มประสิทธิภาพ
 
 เริ่มด้วย scope, edition ที่ใช้, checks ที่รันจริง/ผล และส่วนที่ยังไม่ได้ตรวจ จากนั้นแยก confirmed findings, needs-verification และ hardening หากไม่พบ ให้ระบุว่า “ไม่พบช่องโหว่ที่ยืนยันได้ใน scope ที่ตรวจ”
 

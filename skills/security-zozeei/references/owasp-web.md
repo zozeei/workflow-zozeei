@@ -7,6 +7,7 @@
 ## A01:2025 — Broken Access Control
 
 - Trace object/tenant-level permission ของ read/update/delete และ role checks ของ admin routes รวมการบังคับสิทธิ์ใน middleware/service
+- เทียบสิทธิ์ user A/B และ tenant A/B ทั้ง list/detail/bulk/export/file routes ที่อยู่ใน scope รวม field-level read/write; trace tenant/owner จาก authenticated context และ membership ที่ server ตรวจ ไม่เชื่อ ID จาก body/header เพียงอย่างเดียว เสนอ fixtures ที่ทั้งปฏิเสธข้ามสิทธิ์และยังยอมรับเจ้าของที่ถูกต้อง
 - CORS: ตรวจ origin allowlist/reflection และ credentialed response ที่ browser อ่านได้จริง `Access-Control-Allow-Origin: *` กับ credentials ถูก browser บล็อก ไม่ใช่หลักฐานว่าข้อมูลรั่วเอง และ CORS ไม่แทน authorization/CSRF controls ดู [Fetch Standard](https://fetch.spec.whatwg.org/#http-cors-protocol)
 - ถ้ามี user-controlled server fetch ให้อ่าน URL/SSRF ใน [input-validation.md](input-validation.md)
 
@@ -36,10 +37,17 @@
 
 - ตรวจ abuse/rate limits ที่ login/OTP/recovery/payment และงานใช้ทรัพยากรสูง พร้อม account enumeration ตาม threat model
 - ตรวจ replay, transaction ordering, partial failure และ idempotency ในธุรกรรมสำคัญ; timestamp อย่างเดียวไม่รับประกันป้องกัน replay
+- ตรวจ check-then-write ของยอดเงิน stock คูปอง และการอนุมัติภายใต้ concurrent requests: invariant ต้องคงอยู่ด้วย atomic conditional write, constraint หรือ transaction/locking ที่เหมาะกับ DB/isolation จริง การครอบ transaction อย่างเดียวไม่พิสูจน์ว่าป้องกัน race
+- Idempotency ต้องตรวจ scope ต่อผู้ใช้/tenant/operation, payload เดิมกับ key เดิม และการจอง key/บันทึกผลแบบ atomic รวม retries/webhooks และผลจากบริการภายนอก; การมี header หรือเช็ค key ก่อน insert อย่างเดียวไม่พอ เสนอการทดสอบพร้อมกันใน isolated environment ว่าตัดเงิน/ใช้คูปอง/ลด stock ได้ตามจำนวนที่อนุญาต
+- เกณฑ์ธุรกรรม: [OWASP Business Logic Security](https://cheatsheetseries.owasp.org/cheatsheets/Business_Logic_Security_Cheat_Sheet.html) — ตรวจเอกสาร 2026-09-10 เมื่อพบ query/resource amplification ให้อ่าน [resource-performance.md](resource-performance.md)
 
 ## A07:2025 — Authentication Failures
 
 - ตรวจ credential verification, MFA/recovery bypass, brute force controls และ session rotation/expiry/revocation
+- JWT: trace การ verify signature/MAC ก่อนเชื่อ claims ไม่ถือ decode ว่ายืนยันตัวตน ตรวจ algorithm allowlist ฝั่ง server, trusted key/issuer, audience, expiry และ not-before ตาม token profile พร้อม clock skew ที่จำกัด; ตรวจ middleware/library config จริงก่อนสรุปว่าขาดการตรวจ
+- Key selection (`kid`, `jku`, `x5u`/JWKS): จำกัดแหล่ง key ที่เชื่อถือได้และผูกกับ issuer ไม่ดึง URL หรือ path ตาม token โดยไม่มี validation; แยก token type/consumer เพื่อป้องกันนำ token คนละวัตถุประสงค์มาใช้แทนกัน ดู [RFC 8725](https://www.rfc-editor.org/rfc/rfc8725.html)
+- Token/session lifecycle: ตรวจ logout, password reset, บัญชีถูกระงับ และการเปลี่ยนสิทธิ์ว่าจำกัดการใช้ token เก่าตาม policy ได้จริง รวมอายุ access token และการเพิกถอน refresh token; ถ้าใช้ refresh rotation ให้ตรวจ reuse detection/การอัปเดตแบบ atomic ตาม flow ไม่กำหนดว่าทุกระบบต้องมี JWT denylist แบบเดียวกัน
+- เสนอ fixtures สำหรับ signature ผิด, issuer/audience ผิด, expired/not-yet-valid และ token หลัง revoke พร้อม valid-token control; แนวทาง [OWASP REST Security](https://cheatsheetseries.owasp.org/cheatsheets/REST_Security_Cheat_Sheet.html#jwt) — ตรวจเอกสาร 2026-09-10
 - Session cookies: ประเมิน HttpOnly, Secure, scope และ SameSite ตาม flow; cross-site flow ที่ต้องใช้ `SameSite=None; Secure` ต้องตรวจ CSRF/origin controls แทนการบังคับ Lax/Strict ทุกระบบ
 - ตรวจ CSRF ของ cookie-auth state-changing routes และ password policy/blocklist ตาม [input-validation.md](input-validation.md)
 
