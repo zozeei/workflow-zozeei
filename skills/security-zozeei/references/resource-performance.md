@@ -20,4 +20,4 @@
 
 - รายงาน N+1 ที่ยืนยันได้เป็น `performance` พร้อมหลักฐาน query growth และผลกระทบที่ทราบ ใช้สถานะตาม SKILL หลักและ `NOT RATED` สำหรับ security severity เมื่อยังไม่มีผลกระทบด้าน security; ข้อเสนอ optimization ที่ยังไม่พบปัญหาเป็น `hardening` / INFORMATIONAL
 - จัดเป็น `security/availability` เมื่อมีหลักฐานเส้นทางที่ผู้เรียกขยายงานได้และ controls ไม่เพียงพอจนเกิดความเสี่ยงต่อ availability/ค่าใช้จ่าย ระบุสิทธิ์ ขอบเขตและข้อจำกัด; ชื่อ N+1 หรือ endpoint ช้าอย่างเดียวไม่ยืนยัน DoS
-- แยกค่าที่วัดจริงจากการคาดการณ์ ไม่สร้าง latency/query-count/token ตัวเลขสมมติเป็นผลตรวจ และไม่ทำ load test บนระบบจริงจากสิทธิ์ audit เสนอการวัดใน isolated environment พร้อมขอบเขตเมื่อยังไม่มีข้อมูล
+- แยกค่าที่วัดจริงจากการคาดการณ์ ไม่สร้าง latency/query-count ตัวเลขสมมติเป็นผลตรวจ และไม่ทำ load test บนระบบจริงจากสิทธิ์ audit เสนอการวัดใน isolated environment พร้อมขอบเขตเมื่อยังไม่มีข้อมูล
