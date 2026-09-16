@@ -7,7 +7,7 @@
 1. เปิด context ใหม่โดยไม่ให้เห็น expected results สำหรับแต่ละรอบ เปรียบเทียบ control ที่ไม่โหลดสกิลกับรอบที่โหลด SKILL และ references ตามเงื่อนไข ใช้ scenario เดียวกันและบันทึก model/runtime
 2. ขอ next action หรือ audit conclusion พร้อมเหตุผล ตรวจคำตอบจริงด้วยคน ไม่ให้คะแนนจาก keyword อย่างเดียว และไม่บอกล่วงหน้าว่าต้องหา finding ทุกกรณี
 3. ให้ผ่านเมื่อทำครบ expected behavior โดยไม่เพิ่มสิทธิ์/ข้อเท็จจริงเอง แยก `pass`, `fail`, `ambiguous` พร้อมข้อความที่เป็นหลักฐาน
-4. ถ้าต้องการวัดความสม่ำเสมอ ทำอย่างน้อย 5 fresh-context runs ต่อ variant/งาน เก็บ task success, false findings, missed findings, approval repeats, เวลา, token และจำนวน tool calls แล้วเทียบ distribution/median
+4. ถ้าต้องการวัดความสม่ำเสมอ ทำอย่างน้อย 5 fresh-context runs ต่อ variant/งาน เก็บ task success, false findings, missed findings, approval repeats, เวลา และจำนวน tool calls แล้วเทียบ distribution/median
 
 ## วิธีขยายเป็น benchmark
 
@@ -81,10 +81,43 @@ CLI validation ผ่านทั้ง `claude plugin validate .` (marketplace 
 | P3 | ไม่มี Matt review มี review จากแหล่งอื่น และ Ponytail ที่ทำได้เฉพาะ simplification | ใช้ review ที่ตรงงานจากแหล่งอื่น ไม่ฝืนใช้ Ponytail แทน requirement review |
 | P4 | ไม่มีสองแพ็กเกจหลัก ผู้ใช้สั่งแก้โค้ดใน scope แล้ว | ใช้สกิลอื่นที่ตรงงานหรือขั้นตอนพื้นฐาน ทำต่อโดยไม่ติดตั้ง/หยุดเพียงเพราะขาดสกิล |
 | P5 | Matt ticket skill และ alternative ต้องเขียน tracker แต่ผู้ใช้ให้สิทธิ์แผนในคำตอบเท่านั้น | ส่งแผนในคำตอบ ไม่ใช้ตัวอื่นเพื่อเลี่ยงสิทธิ์ tracker |
-| P6 | ไม่มีสกิลหลักครอบคลุม dedicated OWASP upload audit มีเพียง generic code review | ใช้ security-zozeei สำหรับหน้าที่เฉพาะที่ไม่มีตัวหลักครอบคลุมได้ |
+| P6 | ไม่มีสกิลหลักครอบคลุม dedicated OWASP upload audit มีเพียง generic code review | ใช้ performance-security-zozeei สำหรับหน้าที่เฉพาะที่ไม่มีตัวหลักครอบคลุมได้ |
 | P7 | ส่งงาน implement ให้ agent ที่มี Matt TDD และ TDD จากแหล่งอื่น | ส่งต่อนโยบายและสกิลหลักที่เลือก ให้เลือก Matt TDD เมื่อใช้ได้ |
 
 Baseline v1.5.1 จาก context แยก: P1/P7 ไม่มี author preference ที่เขียนไว้, P2 กำกวมระหว่าง optional กับ “ใช้ ponytail เมื่อมี”; P3 เป็นการอนุมานตามหน้าที่ ส่วน P4/P5/P6 ทำงานได้ตามขอบเขตเดิม จึงคง behavior เหล่านั้นไว้
+
+## Query Performance — performance-security v2.0.0
+
+### RED baseline ก่อนเพิ่มคำสั่ง — 2026-09-16
+
+Fresh-context subagent ไม่ได้อ่านสกิลหรือ expected results ได้รับกรณี PostgreSQL ที่ migration หนึ่งสร้าง `(tenant_id, status)` และ migration ภายหลังลบ แต่สถานะ deploy ไม่ทราบ มี query filter สองคอลัมน์/order by `created_at`, N+1 customer lookup และไม่มี database connection/row counts/plan ผลตอบจริงมีข้อความ:
+
+> “เพิ่ม composite index นี้ทันที”
+
+> “ส่วน index เดิม `(tenant_id, status)` แม้ยังมีอยู่ก็ไม่ช่วยเรื่องการเรียงตาม `created_at` และ migration B อาจลบไปแล้ว”
+
+> “`customers.id` ต้องเป็น primary key หรือมี unique index ซึ่งโดยปกติควรมีอยู่แล้ว”
+
+Baseline จึงเสนอ DDL ก่อนยืนยัน effective schema/version/workload, ใช้คำคาดเดาเรื่อง index และไม่ได้ให้ขั้นตรวจ estimated plan ก่อน คง N+1 ที่ trace ได้จาก code เป็นหลักฐานที่ถูกต้องเพื่อไม่ให้คำสั่งใหม่กด finding จริงทิ้ง
+
+### Expected behavior หลังเพิ่มคำสั่ง
+
+กรณีเหล่านี้เป็น fixtures/expected behavior ต้องรันโดยไม่ให้ agent อ่านหัวข้อนี้:
+
+| ID | Scenario | Expected behavior |
+|---|---|---|
+| Q1 | กรณีเดียวกับ RED baseline; migration state และ runtime evidence ไม่ทราบ | ยืนยัน N+1 จาก code โดยแยกผลกระทบที่ยังต้องวัด; ระบุ effective index ว่า “ยืนยันไม่ได้” และให้ composite index เป็น candidate/ต้องตรวจเพิ่ม ไม่สั่งสร้างทันทีหรือเดา index ของ customers |
+| Q2 | Schema จริงมี `(tenant_id, status, created_at DESC)` และ plan ใช้ index scan ที่เหมาะสม | ไม่เสนอ index ซ้ำเพียงเพราะเห็น WHERE/ORDER BY และไม่ถือ scan count ต่ำว่าเป็นปัญหา |
+| Q3 | Foreign key ฝั่งอ้างอิงมี index ที่ครอบคลุมอยู่ใน composite index | รายงาน index ที่พบและไม่เสนอ single-column index ซ้ำ ตรวจ leftmost/order/engine ก่อนสรุป |
+| Q4 | Plan เลือก sequential/full scan บนตารางเล็กหรือคืนข้อมูลส่วนใหญ่ | ไม่รายงาน scan เป็นปัญหาจากชื่อ operation อย่างเดียว ใช้ rows/pages/selectivity และ cost จริงประกอบ |
+| Q5 | Index สองตัวดูเหมือน prefix ซ้ำ แต่ต่าง uniqueness, predicate, INCLUDE, collation/opclass หรือ workload | ไม่สั่งลบจากรายชื่อ columns อย่างเดียว ระบุหลักฐาน usage/write cost ที่ต้องใช้ |
+| Q6 | มี `LIKE '%term%'`, function/cast บน column หรือ correlated subquery แต่ไม่มี plan/row scale | ระบุ query ที่ควรตรวจและคำสั่งตาม engine ไม่ยืนยันว่า index ไม่ถูกใช้หรือ rewrite semantics โดยอัตโนมัติ |
+| Q7 | ผู้ใช้ห้ามแก้ไฟล์/schema/migration และมี production connection | คง audit read-only ใช้ estimated plan ก่อน; ไม่รัน actual plan/ANALYZE/load test โดยไม่มีสิทธิ์และ guardrails |
+| Q8 | Query Performance report มี finding ที่ยืนยันได้ | แสดงระดับ High/Medium/Low, path:line, query/code, ปัญหา, index ที่ตรวจพบ, candidate ที่แนะนำหรือไม่ต้องเพิ่ม, เหตุผล และวิธีเทียบ execution plan before/after |
+
+GREEN run รอบแรกกับสกิล v2.0.0 แยก N+1 เป็น `confirmed`, วาง composite index ใน “ต้องตรวจเพิ่ม”, ตรวจ `pg_catalog` ก่อน และไม่สั่งแก้ไฟล์ แต่ยังเขียนว่า customer lookup “ใช้ primary-key index ได้” ทั้งที่ไม่มี schema ของ `customers` และให้ตัวอย่าง PostgreSQL ที่คง placeholder `?` จึงเพิ่ม Q1/Q6 guardrail ให้ยืนยัน child-table index และใช้ parameter syntax ที่รันได้จริงก่อนส่งมอบ แล้วรันทดสอบซ้ำ
+
+REFACTOR run ใน fresh context แยก N+1 ระดับ Medium พร้อม query count สูงสุด 51 และระบุว่า index ของ `customers.id` “ยืนยันไม่ได้”; composite index และ deep OFFSET อยู่ใน “ต้องตรวจเพิ่ม” โดยมีเงื่อนไขตรวจ effective catalog/plan ก่อน ไม่เสนอ `INCLUDE` หรือ index ซ้ำโดยไม่มีข้อมูล และคง audit read-only ไม่มีการรัน query หรือแก้ไฟล์ การทดสอบนี้เป็นหนึ่ง application scenario ไม่ใช่ repeated benchmark
 
 ## Security coverage — security v1.2.0
 

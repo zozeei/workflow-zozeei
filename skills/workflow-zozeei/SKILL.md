@@ -5,7 +5,7 @@ description: >-
   multi-step planning, implementation, or risk-based review; including วางแผน,
   แตกงาน, and ลงมือพัฒนา. Not needed for general questions unrelated to software work.
 metadata:
-  version: "1.6.2"
+  version: "1.7.0"
 ---
 
 # Workflow Zozeei
@@ -61,7 +61,7 @@ metadata:
 
 ตารางเป็นตัวอย่างชื่อที่พบในแต่ละรุ่น งานอื่นหรือชื่อที่ต่างออกไปให้เทียบ description และที่มาจากสองแหล่งหลักก่อน ใช้ร่วมกันเฉพาะบทบาทที่ต่างกัน โหลดเฉพาะสกิลที่ตรงงาน ไม่รันครบทุกตัวหรือเพิ่ม Phase ให้กับงานเล็ก
 
-อ่านคำสั่งจริงก่อนใช้ โดยเฉพาะ side effects/automatic commit และใช้สิทธิ์เดิมตามกฎสิทธิ์และขอบเขต หากตัวหลักต้องใช้สิทธิ์ที่ยังไม่มี ให้พักเฉพาะการกระทำนั้นหรือส่งผลในคำตอบเมื่อทำได้ ไม่เปลี่ยนไปใช้ตัวอื่นเพื่อเลี่ยงสิทธิ์ งานเฉพาะด้านที่ไม่มีตัวหลักครอบคลุม เช่น OWASP upload audit จึงใช้ `security-zozeei` ตาม scope ได้
+อ่านคำสั่งจริงก่อนใช้ โดยเฉพาะ side effects/automatic commit และใช้สิทธิ์เดิมตามกฎสิทธิ์และขอบเขต หากตัวหลักต้องใช้สิทธิ์ที่ยังไม่มี ให้พักเฉพาะการกระทำนั้นหรือส่งผลในคำตอบเมื่อทำได้ ไม่เปลี่ยนไปใช้ตัวอื่นเพื่อเลี่ยงสิทธิ์ งานเฉพาะด้านที่ไม่มีตัวหลักครอบคลุม เช่น Query Performance หรือ OWASP upload audit จึงใช้ `performance-security-zozeei` ตาม scope ได้
 
 ## Phase 1 — ทำ Requirement ให้ชัด
 
@@ -100,7 +100,8 @@ metadata:
 |---|---|
 | Requirement / มาตรฐานโปรเจกต์ | `code-review` ของ Matt Pocock ก่อนตัวอื่นที่หน้าที่เดียวกัน |
 | ความซับซ้อน / over-engineering | `ponytail-review` ของ Ponytail |
-| Security / Auth / trust boundary | สกิลหลักที่ครอบคลุมการตรวจนั้น; ถ้าไม่มีจึงใช้ `security-zozeei` เฉพาะ scope ที่เกี่ยวข้อง |
+| Performance / Query / index / execution plan | `performance-security-zozeei` เฉพาะ scope ที่เกี่ยวข้อง |
+| Security / Auth / trust boundary | สกิลหลักที่ครอบคลุมการตรวจนั้น; ถ้าไม่มีจึงใช้ `performance-security-zozeei` เฉพาะ scope ที่เกี่ยวข้อง |
 | Architecture / Data Integrity | `code-review` ของ Matt Pocock เน้น invariants/failure paths; ถ้าไม่มีตัวหลักจึงใช้ `scrutinize` หรือสกิลอื่นที่ตรงงาน |
 
 งานเล็กตรวจเองได้ด้วยสกิลหลักที่เกี่ยวข้อง ไม่ต้องเพิ่ม reviewer/subagent หรือรันทุก review ถ้าไม่มีสกิล review ที่เหมาะสมให้ตรวจ requirement, invariants, failure paths และ tests โดยตรง งานเสี่ยงสูงใช้ผู้ตรวจแยกบริบทเมื่อ runtime รองรับและการส่งต่อคุ้มค่า AI review ไม่แทนผลทดสอบจริง

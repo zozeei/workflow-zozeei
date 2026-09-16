@@ -1,7 +1,7 @@
 {
   "name": "workflow-zozeei",
-  "version": "1.7.3",
-  "description": "ชุดสกิลภาษาไทยสำหรับวางแผน พัฒนาซอฟต์แวร์ และตรวจสอบความปลอดภัย (Security Audit, ValidatesSafeInput, OWASP Top 10 Web 2025 & Mobile 2024)",
+  "version": "2.0.0",
+  "description": "ชุดสกิลภาษาไทยสำหรับวางแผน พัฒนาซอฟต์แวร์ ตรวจ Query Performance และตรวจสอบความปลอดภัย (N+1, Index, Execution Plan, ValidatesSafeInput, OWASP Web 2025 & Mobile 2024)",
   "author": {
     "name": "zozeei",
     "url": "https://github.com/zozeei"
@@ -14,6 +14,9 @@
     "planning",
     "thai",
     "engineering",
+    "performance",
+    "database",
+    "query",
     "security",
     "owasp",
     "audit",

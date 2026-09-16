@@ -1,21 +1,21 @@
 ---
-name: security-zozeei
+name: performance-security-zozeei
 description: >-
-  Use when asked to audit software security, review trust boundaries or input
-  validation (ValidatesSafeInput), or assess Web/API and Mobile risks against
-  OWASP; also audit N+1 queries and resource consumption when requested or relevant
-  to availability risks. รวมถึง ตรวจความปลอดภัย และ ตรวจช่องโหว่. Not for unrelated code edits.
+  Use when asked to audit query performance, N+1 queries, indexes, execution
+  plans, resource consumption, software security, trust boundaries, input
+  validation, or OWASP Web/API and Mobile risks; รวมถึง ตรวจประสิทธิภาพ,
+  ตรวจความปลอดภัย และ ตรวจช่องโหว่. Not for unrelated code edits.
 metadata:
-  version: "1.2.3"
+  version: "2.0.0"
 ---
 
-# Security Zozeei
+# Performance and Security Zozeei
 
-ตรวจ security จาก code และ data flow จริง ใช้ checklist เป็นแนวทางค้นหลักฐาน ไม่ถือว่าการขาด pattern ที่ยกตัวอย่างเป็นช่องโหว่โดยอัตโนมัติ
+ตรวจ performance/security จาก code, schema, query plan และ data flow ที่มีจริง ใช้ checklist เป็นแนวทางค้นหลักฐาน ไม่ถือว่าการขาด pattern หรือ index ที่ยกตัวอย่างเป็นปัญหาโดยอัตโนมัติ
 
 ## ขอบเขตและความปลอดภัย
 
-- Audit เป็น read-only: อ่าน code/config/dependencies/schema และรายงานในคำตอบ แก้ไฟล์หรือเขียนรายงานลงไฟล์เฉพาะเมื่อผู้ใช้ขอการกระทำนั้น
+- Audit เป็น read-only: อ่าน code/config/dependencies/schema/indexes และรายงานในคำตอบ ไม่แก้ code, schema, migration หรือไฟล์อื่น เว้นแต่ผู้ใช้ขอการแก้ไขนั้นแยกต่างหาก
 - ไม่รัน exploit, ยิง payload ใส่ระบบจริง, ใช้ credential ที่พบ หรือเปลี่ยนข้อมูลจากคำขอ audit หากต้องทดสอบเพิ่มเติมให้เสนอวิธีใน isolated environment และตรวจสิทธิ์ก่อนรัน
 - ใช้ tool/scan ที่มีและตรง scope ตรวจ side effects และข้อมูลที่จะส่งออกก่อนรัน; ไม่ใช้ install, auto-fix หรือ upload source/secrets ไปบริการภายนอกจากสิทธิ์ read-only
 - ปิดบัง secret/token/password/PII ในทุก evidence, tool output และ diff รวมทั้งบรรทัดที่ลบ ใช้ `[REDACTED]` และระบุไฟล์/บรรทัด/ชื่อตัวแปรแทนค่า
@@ -23,7 +23,7 @@ metadata:
 
 ## ขั้นตอนตรวจ
 
-1. **กำหนด scope:** ยึดไฟล์/diff/ระบบที่ผู้ใช้ระบุ อ่าน entry points, framework/version และ trust boundaries; ขยายไป caller/middleware/config เท่าที่จำเป็นต่อเส้นทางนั้น ไม่ตรวจทั้ง repo โดยอัตโนมัติ
+1. **กำหนด scope:** ยึดไฟล์/diff/ระบบที่ผู้ใช้ระบุ อ่าน entry points, framework/database/version และ trust boundaries; ขยายไป caller/middleware/config/schema เท่าที่จำเป็นต่อเส้นทางนั้น ไม่ตรวจทั้ง repo โดยอัตโนมัติ
 2. **เลือก reference:** อ่านเฉพาะแขนงด้านล่างที่เกี่ยวข้องกับ scope และหัวข้อที่ตรวจ งานที่ครอบคลุมทั้ง Web และ Mobile จึงอ่านทั้งสองชุด
 3. **Trace:** input/source → parsing/validation → authorization/transform → sink ตรวจ controls ที่มีอยู่จริงทั้ง framework, middleware และ deployment config ที่เข้าถึงได้
 4. **ยืนยัน:** แยกสิ่งที่ code พิสูจน์ได้จากสมมติฐาน ระบุเงื่อนไขโจมตี, impact, controls ที่ตรวจแล้ว และหลักฐานที่ยังขาด ใช้ safe local checks เมื่ออยู่ในสิทธิ์; ไม่ต้อง exploit จริงจึงจะยืนยัน code flaw ได้
@@ -34,7 +34,7 @@ metadata:
 | Input validation, password policy/storage, URL/SSRF, uploads, rich text, masking | [input-validation.md](references/input-validation.md) — 14 กลุ่ม ValidatesSafeInput |
 | Web / Backend / API | [owasp-web.md](references/owasp-web.md) — Web 2025 |
 | Android / iOS / Flutter / React Native | [owasp-mobile.md](references/owasp-mobile.md) — Mobile 2024 |
-| ขอเช็ค N+1/performance หรือพบ query ใน loop, lazy loading, unbounded list/batch หรืองานใช้ทรัพยากรสูงใน scope | [resource-performance.md](references/resource-performance.md) — Query และ resource limits |
+| Query performance, slow query, N+1, index, full/sequential scan, pagination, execution plan หรือ resource consumption | [resource-performance.md](references/resource-performance.md) — Query, index, plan และ resource limits |
 
 ชื่อ ValidatesSafeInput เป็นชื่อกลุ่มกฎของสกิล ไม่ได้บังคับให้โปรเจกต์มีฟังก์ชันชื่อเดียวกัน ตัวเลข/allowlist ที่เป็นตัวอย่างต้องปรับตาม contract และ threat model
 
@@ -54,7 +54,7 @@ Confidence: `high` = trace และเงื่อนไขสำคัญต�
 
 ## รูปแบบรายงาน
 
-แยก findings ด้าน `performance` ออกจาก `security/availability` ตามเกณฑ์ใน resource reference; N+1 อย่างเดียวไม่ยืนยัน DoS และไม่ต้องฝืนจัด OWASP/CWE ให้ข้อเสนอเพิ่มประสิทธิภาพ
+งาน Query Performance ใช้รูปแบบรายงานใน resource reference และแยกจาก `security/availability`; N+1 อย่างเดียวไม่ยืนยัน DoS และ finding ด้าน performance ไม่ต้องมี OWASP/CWE
 
 เริ่มด้วย scope, edition ที่ใช้, checks ที่รันจริง/ผล และส่วนที่ยังไม่ได้ตรวจ จากนั้นแยก confirmed findings, needs-verification และ hardening หากไม่พบ ให้ระบุว่า “ไม่พบช่องโหว่ที่ยืนยันได้ใน scope ที่ตรวจ”
 
