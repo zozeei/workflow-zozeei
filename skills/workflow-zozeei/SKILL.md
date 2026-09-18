@@ -5,7 +5,7 @@ description: >-
   multi-step planning, implementation, or risk-based review; including วางแผน,
   แตกงาน, and ลงมือพัฒนา. Not needed for general questions unrelated to software work.
 metadata:
-  version: "1.7.0"
+  version: "1.8.0"
 ---
 
 # Workflow Zozeei
@@ -86,6 +86,8 @@ metadata:
 ## Phase 3 — แตกงานที่ตรวจผลได้
 
 เรียงงานตาม dependency แต่ละงานระบุผลลัพธ์, scope/ไฟล์ที่ตรวจพบ, blocker, acceptance criteria และ verification เพิ่ม role/tier เฉพาะงานที่ delegate จริง
+
+เมื่อแผนมีหลายกิ่ง, งานอิสระหลายงาน หรือ dependency ที่อาจเปลี่ยนระหว่างทำ ให้อ่าน [loop-graph.md](references/loop-graph.md) งานเดี่ยวและแผนเส้นตรงใช้ workflow ปกติ
 
 ส่งแผนในคำตอบเป็นค่าเริ่มต้น เมื่อได้รับสิทธิ์ tracker ให้เลือกสกิล tickets ตามลำดับด้านบน (`to-issues` เป็นชื่อทางเลือกที่ต้องตรวจหน้าที่/ที่มา) เมื่อแผนพร้อมให้ตัดสินใจไป Phase 4 ตามกฎสิทธิ์และขอบเขต
 

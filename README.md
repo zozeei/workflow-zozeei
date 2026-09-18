@@ -2,12 +2,12 @@
 
 ชุดสกิลภาษาไทยสำหรับ AI Agents (Claude Code, Codex, Gemini CLI) ประกอบด้วย 2 สกิลหลัก:
 
-1. **`workflow-zozeei`**: นำทางจาก requirement ไปสู่การลงมือที่ตรวจผลได้ — ทำความต้องการให้ชัด เลือกวิธีที่เรียบง่าย แตกงาน ลงมือ และตรวจผล
+1. **`workflow-zozeei`**: นำทางจาก requirement ไปสู่การลงมือที่ตรวจผลได้ — ทำความต้องการให้ชัด เลือกวิธีที่เรียบง่าย แตกงาน ลงมือ และตรวจผล รวม [Loop + Graph](skills/workflow-zozeei/references/loop-graph.md) สำหรับแผนหลายกิ่งหรือมี dependency
 2. **`performance-security-zozeei`**: ตรวจ Query Performance, N+1, index และ execution plan พร้อมตรวจความปลอดภัยจาก code/trust boundaries ตาม **ValidatesSafeInput 14 กลุ่มกฎ**, **OWASP Top 10 Web (2025)** และ **OWASP Mobile Top 10 (2024)**
 
 ตัวสกิลเป็น Markdown ไม่มี script หรือ dependency บังคับ มี `SKILL.md` เป็นขั้นตอนหลักและ `references/` สำหรับโหลดเฉพาะหัวข้อที่ใช้ ไม่ต้องอ่าน checklist Web และ Mobile พร้อมกันทุกงาน
 
-Workflow ใช้สิทธิ์ที่ผู้ใช้ให้ไว้ต่อเนื่องข้าม Phase; คำขอวางแผนอย่างเดียวไม่ให้สิทธิ์แก้ระบบ งานเล็กทำด้วย agent เดียวได้ การเลือกโมเดล/delegation ขึ้นกับความสามารถจริงของ runtime
+Workflow ใช้สิทธิ์ที่ผู้ใช้ให้ไว้ต่อเนื่องข้าม Phase; คำขอวางแผนอย่างเดียวไม่ให้สิทธิ์แก้ระบบ งานเล็กทำด้วย agent เดียวได้ แผนหลายกิ่งใช้ dependency graph และ Build → Check → Fix loop ต่อ task การเลือกโมเดล/delegation ขึ้นกับความสามารถจริงของ runtime
 
 Performance and Security ครอบคลุม [Query, index, execution plan, N+1 และ resource limits](skills/performance-security-zozeei/references/resource-performance.md) รวมการตรวจรหัสผ่านที่เคยรั่ว, ไฟล์อัปโหลดและ active content, JWT/session, สิทธิ์ข้ามผู้ใช้/tenant และธุรกรรมพร้อมกัน โดยโหลด reference เฉพาะหัวข้อที่เกี่ยวข้อง
 

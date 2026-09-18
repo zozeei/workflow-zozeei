@@ -25,6 +25,8 @@ Tier เป็นเป้าหมายในการเลือก ไม�
 
 ทุก task ระบุ goal, repo-relative scope/ไฟล์ที่เป็นเจ้าของ, evidence/inputs ที่จำเป็น, constraints/สิทธิ์, acceptance criteria และ verification ระบุ decision ที่ยังห้ามสมมติให้ชัด
 
+task จาก execution graph ต้องส่ง `id`, `depends_on` และ state ปัจจุบันไปด้วย delegate เฉพาะ `ready` nodes และให้ Planner รวมผลก่อนเปิด downstream ตาม [loop-graph.md](loop-graph.md)
+
 ส่งต่อชื่อ/ที่มาของสกิลหลักที่เลือกแล้ว และลำดับ Ponytail/Matt Pocock → สกิลอื่นเมื่อไม่มีตัวหลักที่ตรงงาน → ขั้นตอนพื้นฐาน ตามนโยบายใน SKILL.md ให้ผู้รับงานใช้ลำดับเดียวกันเมื่อ catalog ของตนต่างจาก agent หลัก
 
 | Role | หน้าที่และสิ่งที่ส่งกลับ |

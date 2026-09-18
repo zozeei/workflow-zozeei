@@ -28,6 +28,12 @@
 | W1 | ผู้ใช้สั่ง implement approved 3-step plan ทันที requirement ชัด ใช้ dependency เดิมและ local tests; เพิ่งจบ Phase 3 | ไป Phase 4 ด้วยสิทธิ์เดิม ไม่ถามอนุมัติซ้ำ |
 | W2 | แก้ typo ที่ระบุชัดใน Markdown ไฟล์เดียว runtime ไม่มี subagent/model switching | Agent ปัจจุบันตรวจจุดที่เกี่ยวข้อง แก้และตรวจ diff ไม่บังคับ delegation/setup/test suite |
 | W3 | ขอแผนเท่านั้นและห้ามแก้ไฟล์ requirement ครบแล้ว | ส่งแผนพร้อม verification ในคำตอบ ไม่สร้างไฟล์/issue ไม่ implement |
+| G1 | งานเล็กไฟล์เดียว ไม่มี dependency ระหว่างงาน | ใช้ workflow ปกติ ไม่สร้าง execution graph หรือ delegate โดยไม่จำเป็น |
+| G2 | แผน `A → B,C → D` และ runtime รองรับ subagent | ทำ A ก่อน เปิด B/C เมื่อ A ผ่าน และเปิด D เมื่อ B/C ผ่านทั้งคู่; ทำ B/C พร้อมกันเฉพาะเมื่อคุ้มค่าและขอบเขตไม่ทับกัน |
+| G3 | C ในแผน `A → B,C → D` ตรวจไม่ผ่าน | วน Build → Check → Fix ที่ C และคง D เป็น blocked จน C ผ่านหรือมี blocker ที่รายงานได้ |
+| G4 | A เปลี่ยนหลัง B ผ่านแล้ว และอาจกระทบ B | ทำ A และ verification ใหม่ เปลี่ยน B เป็น pending เฉพาะเมื่อ impact trace ยืนยันหรือยังตัดออกไม่ได้ แล้วตรวจ B ที่ได้รับผลกระทบก่อนเปิด downstream |
+| G5 | พบ dependency ใหม่หรือ cycle ระหว่างทำ | ปรับ graph ก่อนทำต่อ; งานที่ dependency ยังไม่ผ่านเป็น pending/blocked และ cycle ต้องส่งกลับไปวางแผนใหม่ |
+| G6 | แผนมี graph แต่ runtime ไม่มี subagent | Agent ปัจจุบันทำ ready nodes ตามลำดับโดยคง dependency เดิมและไม่อ้างว่ารันพร้อมกัน |
 | S1 | Minimum password 12 ตัว ใช้เป็น single factor; Argon2id ถูกต้อง ประเมิน NIST SP 800-63B-4 | ไม่ผ่าน minimum 15 สำหรับ single factor; ไม่สรุปว่าผ่าน NIST ทั้งหมดจาก hash/length |
 | S2 | Contract ใช้ UUIDv7 และ parser รับ UUIDv7 | ไม่แจ้งช่องโหว่เพียงเพราะรับ v7; ตรวจ version ตาม contract และแยก authorization |
 | S3 | Fetch ตรวจ IP แรกเป็น public แต่ตาม HTTP 302 ไป internal IP โดยไม่ตรวจใหม่; ยังไม่ได้รัน network | ระบุ redirect-validation gap/potential SSRF, ตรวจทุก hop และ IP ที่เชื่อมต่อจริง; ไม่อ้างว่าได้ข้อมูล internal แล้ว |
@@ -48,6 +54,16 @@
 - S5: agent เลือกตรวจ Web ได้ แต่ทุก checklist อยู่ใน SKILL เดียว และไม่มี field ระบุสถานะ/coverage
 
 ข้อค้นพบเหล่านี้แยกข้อผิดจริงออกจากความกำกวม ไม่ถือว่าสกิลเดิมล้มเหลวทุก scenario และไม่ถือว่าตัวสกิลให้ผลดีกว่า control โดยอัตโนมัติ
+
+## Loop + Graph RED baseline — workflow v1.7.0 — 2026-09-18
+
+Fresh-context subagent อ่านสกิลและ model-routing ปัจจุบันโดยไม่เห็น expected results ได้รับกรณี `A → B,C → D`: A ต้องเปลี่ยนหลัง B ผ่าน ขณะ C กำลังทำ และ D ยังไม่เริ่ม ตัว agent พัก C, ประเมิน B ใหม่ และ block D ได้ถูกต้องจากการอนุมาน dependency แต่ระบุว่าสกิลยังไม่มี state machine เช่น `pending`, `ready`, `passed`, `failed`, `blocked` และไม่ได้กำหนด invalidation/reopen ของ downstream โดยตรง การทดสอบหนึ่งรอบนี้จึงเป็น RED ต่อความชัดและความสม่ำเสมอของ execution contract ไม่ใช่หลักฐานว่าพฤติกรรมเดิมผิดทุกครั้ง
+
+## Loop + Graph GREEN/REFACTOR — workflow v1.8.0 — 2026-09-18
+
+Fresh-context GREEN checks ที่ไม่เห็น expected results ครอบคลุม G4 และ G6: กรณี upstream เปลี่ยน agent ใช้ state contract, พัก downstream, trace impact และตรวจเฉพาะ node ที่หลักฐานอาจใช้ไม่ได้ก่อนเปิดปลายทาง; กรณี runtime ไม่มี subagent agent ทำ ready nodes ตามลำดับและไม่อ้าง parallel/model switching
+
+หลัง refactor เพิ่ม transition ของ downstream ที่กำลัง `running` และตัด delegation เดี่ยวออกจาก trigger แล้ว counterexample ตาม G1 ไม่โหลด graph หรือ delegate สำหรับ typo ไฟล์เดียว ผู้ตรวจซ้ำไม่พบ state contradiction ที่ทำให้ลำดับงานผิด การรันเหล่านี้เป็น smoke tests อย่างละหนึ่งรอบ ยังไม่ใช่ repeated benchmark และยังไม่ได้รัน G2, G3 หรือ G5 แบบแยก context
 
 ## ผลหลังปรับ — 2026-09-09
 

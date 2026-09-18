@@ -1,6 +1,6 @@
 {
   "name": "workflow-zozeei",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "description": "ชุดสกิลภาษาไทยสำหรับวางแผน พัฒนาซอฟต์แวร์ ตรวจ Query Performance และตรวจสอบความปลอดภัย (N+1, Index, Execution Plan, ValidatesSafeInput, OWASP Web 2025 & Mobile 2024)",
   "author": {
     "name": "zozeei",
